@@ -1,6 +1,7 @@
 ﻿using Application.DTO;
 using Application.InterfaceRepository;
 using Application.IService;
+using Application.Query;
 using Domain.Entity;
 using MediatR;
 
@@ -21,28 +22,33 @@ namespace Application
 
 namespace Application.Command
 {
-    public record ParsingHandler(string url) : IRequest<VacancyDTO?>;
+    public record ParsingCommandHandler(string url) : IRequest<VacancyDTO?>;
 
-    public class ParsingAppHandler : IRequestHandler<ParsingHandler, VacancyDTO?>
+    public class ParsingAppHandler : IRequestHandler<ParsingCommandHandler, VacancyDTO?>
     {
         private readonly IRepository<Vacancy> _Repository;
         private readonly IParsingService _Service;
+        private readonly IMediator _mediator;
 
-        public ParsingAppHandler(IRepository<Vacancy> repository, IParsingService service)
+        public ParsingAppHandler(IRepository<Vacancy> repository, IParsingService service, IMediator mediator)
         {
             _Repository = repository;
             _Service = service;
+            _mediator = mediator;
         }
 
-        public async Task<VacancyDTO?> Handle(ParsingHandler request, CancellationToken cancellationToken)
+        public async Task<VacancyDTO?> Handle(ParsingCommandHandler request, CancellationToken cancellationToken)
         {
             VacancyDTO? vacancy = await _Service.ParsingUrl(request.url);
 
             if (vacancy != null)
             {
                 await _Repository.AddAsync(vacancy.MapToVacancy(), cancellationToken);
+
+                ResumeDTO? result = await _mediator.Send(new ResumeCommandHandler(vacancy));
             }
-                return vacancy;
-         }
+
+            return vacancy;
+        }
     }
 }

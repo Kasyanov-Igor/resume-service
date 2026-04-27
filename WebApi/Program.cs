@@ -25,21 +25,21 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-    // ѕровер€ем, есть ли миграции, которые нужно применить
-    if (dbContext.Database.GetPendingMigrations().Any())
-    {
-        dbContext.Database.Migrate();
-    }
-}
+//    // ѕровер€ем, есть ли миграции, которые нужно применить
+//    if (dbContext.Database.GetPendingMigrations().Any())
+//    {
+//        dbContext.Database.Migrate();
+//    }
+//}
 
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>(); //?!?!?!?!?!?!?!?!?!?!?!?!?
-   // context.Database.EnsureCreated(); // —оздаст базу и таблицы, если их нет
+   context.Database.EnsureCreated(); // —оздаст базу и таблицы, если их нет
 }
 
 // Configure the HTTP request pipeline.

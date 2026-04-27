@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel;
 using Npgsql;
 
 namespace Infrastructure.DI
@@ -25,7 +26,9 @@ namespace Infrastructure.DI
                  new NpgsqlConnection(connectionString));//DAPPER
 
             services.AddScoped<IRepository<Vacancy>, VacancyRepository>();
+            services.AddScoped<IRepository<Resume>, ResumeRepository>();
             services.AddScoped<IParsingService, ParsingService>();
+            services.AddScoped<IResumeService, ResumeService>();
 
             services.AddMediatR(cfg => {
                 cfg.RegisterServicesFromAssembly(typeof(GetVacanciesQuery).Assembly);

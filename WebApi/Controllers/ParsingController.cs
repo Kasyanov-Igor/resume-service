@@ -25,17 +25,8 @@ namespace WebApi.Controllers
             if (string.IsNullOrEmpty(url) && url == null)
             { return BadRequest("URL обязателен"); }
 
-            var result = await _mediator.Send(new ParsingHandler(url));
+            var result = await _mediator.Send(new ParsingCommandHandler(url));
             return Ok(result);
         } 
-        
-        
-        [HttpGet]
-        [Route("api/get-vacancy")]
-        public async Task<IActionResult> GetVacancies()
-        {
-            var result = await _mediator.Send(new GetVacanciesQuery());
-            return Ok(result);
-        }
     }
 }
